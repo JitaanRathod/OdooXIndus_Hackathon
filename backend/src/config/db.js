@@ -1,11 +1,10 @@
 const { Sequelize } = require('sequelize');
-const env = require('./env');
 
-const sequelize = new Sequelize(env.DB_NAME, env.DB_USER, env.DB_PASS, {
-  host: env.DB_HOST,
-  port: env.DB_PORT,
+const sequelize = new Sequelize('stockify_db', 'stockify_user', 'stockify123', {
+  host: 'localhost',
+  port: 3306,
   dialect: 'mysql',
-  logging: env.NODE_ENV === 'development' ? console.log : false,
+  logging: false,
   pool: {
     max: 10,
     min: 0,

@@ -1,9 +1,3 @@
-// Role hierarchy for reference:
-// admin            → full access to everything
-// inventory_manager → validate/approve operations, manage products
-// warehouse_staff  → create receipts, transfers, adjustments
-// dispatcher       → manage deliveries only
-
 const ROLES = {
   ADMIN: 'admin',
   INVENTORY_MANAGER: 'inventory_manager',
@@ -11,8 +5,6 @@ const ROLES = {
   DISPATCHER: 'dispatcher',
 };
 
-// authorize(...roles) — pass allowed roles as arguments
-// Usage: router.delete('/:id', protect, authorize('admin'), controller)
 const authorize = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {

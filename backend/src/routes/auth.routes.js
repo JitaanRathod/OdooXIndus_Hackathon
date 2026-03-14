@@ -3,12 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/auth.controller');
 const { protect } = require('../middleware/auth');
 const validate = require('../middleware/validate');
-const {
-  registerSchema,
-  loginSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-} = require('../validators/auth.validator');
+const { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } = require('../validators/auth.validator');
 
 /**
  * @swagger
@@ -43,12 +38,9 @@ const {
  *               role:
  *                 type: string
  *                 enum: [admin, inventory_manager, warehouse_staff, dispatcher]
- *                 example: warehouse_staff
  *     responses:
  *       201:
  *         description: Account created successfully
- *       400:
- *         description: Validation error
  *       409:
  *         description: Email already registered
  */
@@ -76,9 +68,9 @@ router.post('/register', validate(registerSchema), authController.register);
  *                 example: stockify123
  *     responses:
  *       200:
- *         description: Login successful, returns JWT token
+ *         description: Login successful
  *       401:
- *         description: Invalid email or password
+ *         description: Invalid credentials
  */
 router.post('/login', validate(loginSchema), authController.login);
 
@@ -86,15 +78,13 @@ router.post('/login', validate(loginSchema), authController.login);
  * @swagger
  * /auth/me:
  *   get:
- *     summary: Get currently logged-in user profile
+ *     summary: Get current user profile
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Current user details
- *       401:
- *         description: Not authenticated
  */
 router.get('/me', protect, authController.getMe);
 
@@ -137,13 +127,11 @@ router.post('/forgot-password', validate(forgotPasswordSchema), authController.f
  *             properties:
  *               email:
  *                 type: string
- *                 example: john@stockify.com
  *               otp:
  *                 type: string
  *                 example: "482910"
  *               new_password:
  *                 type: string
- *                 example: newpassword123
  *     responses:
  *       200:
  *         description: Password reset successfully

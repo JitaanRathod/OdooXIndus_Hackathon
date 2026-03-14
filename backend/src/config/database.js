@@ -1,3 +1,4 @@
+// Sequelize CLI config — used by sequelize-cli for migrations and seeders
 require('dotenv').config();
 
 module.exports = {
@@ -5,7 +6,7 @@ module.exports = {
     username: process.env.DB_USER || 'stockify_user',
     password: process.env.DB_PASS || 'stockify123',
     database: process.env.DB_NAME || 'stockify_db',
-    host: process.env.DB_HOST || '192.168.56.1',
+    host: process.env.DB_HOST || 'localhost',   // ← fixed from 192.168.56.1
     port: parseInt(process.env.DB_PORT) || 3306,
     dialect: 'mysql',
     logging: false,
@@ -14,7 +15,7 @@ module.exports = {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
+    host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT) || 3306,
     dialect: 'mysql',
     logging: false,

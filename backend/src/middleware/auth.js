@@ -16,7 +16,6 @@ const protect = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, JWT_SECRET);
 
-    // Fetch fresh user from DB (catches deactivated accounts)
     const user = await User.findByPk(decoded.id);
 
     if (!user) {
@@ -27,7 +26,6 @@ const protect = async (req, res, next) => {
       return res.status(403).json({ success: false, message: 'Account has been deactivated' });
     }
 
-    // Attach user to request object for downstream use
     req.user = user;
     next();
   } catch (error) {

@@ -15,7 +15,6 @@ const { NODE_ENV } = require('../config/env');
  */
 router.get('/', async (req, res) => {
   let dbStatus = 'connected';
-
   try {
     await sequelize.authenticate();
   } catch {

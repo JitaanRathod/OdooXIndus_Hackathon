@@ -42,12 +42,11 @@ const User = sequelize.define('User', {
 }, {
   tableName: 'users',
   timestamps: true,
-  // Never return password_hash by default
   defaultScope: {
     attributes: { exclude: ['password_hash', 'otp', 'otp_expires_at'] },
   },
   scopes: {
-    withPassword: { attributes: {} }, // include everything
+    withPassword: { attributes: {} },
   },
 });
 

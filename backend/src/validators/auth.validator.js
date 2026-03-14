@@ -25,9 +25,4 @@ const resetPasswordSchema = z.object({
   new_password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
-module.exports = {
-  registerSchema,
-  loginSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema,
-};
+module.exports = { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema };

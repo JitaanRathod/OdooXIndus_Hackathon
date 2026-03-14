@@ -1,6 +1,3 @@
-// validate(schema) wraps a Zod schema into Express middleware
-// Usage: router.post('/login', validate(loginSchema), authController.login)
-
 const validate = (schema) => (req, res, next) => {
   const result = schema.safeParse(req.body);
 
@@ -17,7 +14,6 @@ const validate = (schema) => (req, res, next) => {
     });
   }
 
-  // Replace req.body with the parsed + coerced data from Zod
   req.body = result.data;
   next();
 };
