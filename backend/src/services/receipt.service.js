@@ -30,6 +30,16 @@ const create = async ({ supplier_name, notes, lines }, userId) => {
   return receipt;
 };
 
+// FIX #9 — was missing, caused "service.update is not a function" crash
+const update = async (id, data) => {
+  const receipt = await Receipt.findByPk(id);
+  if (!receipt) throw new AppError('Receipt not found', 404);
+  if (receipt.status === 'done') throw new AppError('Cannot edit a validated receipt', 400);
+  if (receipt.status === 'cancelled') throw new AppError('Cannot edit a cancelled receipt', 400);
+  const allowed = { supplier_name: data.supplier_name, notes: data.notes };
+  return receipt.update(allowed);
+};
+
 const validate = async (id, userId) => {
   const receipt = await getOne(id);
   if (receipt.status === 'done')      throw new AppError('Already validated', 400);
@@ -59,4 +69,4 @@ const cancel = async (id) => {
   return receipt.update({ status: 'cancelled' });
 };
 
-module.exports = { list, getOne, create, validate, cancel };
+module.exports = { list, getOne, create, update, validate, cancel };

@@ -2,12 +2,15 @@ const router = require('express').Router();
 const { make } = require('../controllers/generic.controller');
 const { protect } = require('../middleware/auth');
 const { authorize } = require('../middleware/rbac');
+const validate = require('../middleware/validate');
+const { transferSchema } = require('../validators/modules.validator');
 const c = make(require('../services/transfer.service'));
 
 router.get('/',             protect, c.list);
-router.post('/',            protect, authorize('admin','warehouse_staff'), c.create);
+router.post('/',            protect, authorize('admin','warehouse_staff'), validate(transferSchema), c.create);
 router.get('/:id',          protect, c.getOne);
 router.put('/:id',          protect, authorize('admin'), c.update);
 router.post('/:id/confirm', protect, authorize('admin','warehouse_staff'), c.action('confirm'));
 router.post('/:id/cancel',  protect, authorize('admin'), c.action('cancel'));
+
 module.exports = router;

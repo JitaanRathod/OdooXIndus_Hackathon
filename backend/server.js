@@ -1,22 +1,23 @@
 require('dotenv').config();
-const express    = require('express');
-const cors       = require('cors');
-const swaggerUi  = require('swagger-ui-express');
+
+const express   = require('express');
+const cors      = require('cors');
+const swaggerUi = require('swagger-ui-express');
 
 const { PORT, FRONTEND_URL } = require('./src/config/env');
 const { connectDB }          = require('./src/config/db');
 require('./src/models');
 
-const swaggerSpec    = require('./src/docs/swagger');
-const errorHandler   = require('./src/middleware/errorHandler');
+const swaggerSpec  = require('./src/docs/swagger');
+const errorHandler = require('./src/middleware/errorHandler');
 
 const app = express();
 
 app.use(cors({
   origin: FRONTEND_URL,
   credentials: true,
-  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -34,12 +35,13 @@ app.use('/api/v1/categories',  require('./src/routes/category.routes'));
 app.use('/api/v1/warehouses',  require('./src/routes/warehouse.routes'));
 app.use('/api/v1/locations',   require('./src/routes/location.routes'));
 app.use('/api/v1/receipts',    require('./src/routes/receipt.routes'));
-app.use('/api/v1/deliveries',  require('./src/routes/delivery.routes'));
+app.use('/api/v1/deliveries',  require('./src/routes/delivery.routes'));  // FIX #6
 app.use('/api/v1/transfers',   require('./src/routes/transfer.routes'));
 app.use('/api/v1/adjustments', require('./src/routes/adjustment.routes'));
 app.use('/api/v1/inventory',   require('./src/routes/inventory.routes'));
 app.use('/api/v1/stock-moves', require('./src/routes/stockmove.routes'));
 app.use('/api/v1/dashboard',   require('./src/routes/dashboard.routes'));
+app.use('/api/v1/alerts',      require('./src/routes/alerts.routes'));     // FIX #7 — new
 app.use('/api/v1/users',       require('./src/routes/user.routes'));
 
 app.use((req, res) => res.status(404).json({ success: false, message: `Route ${req.method} ${req.originalUrl} not found` }));

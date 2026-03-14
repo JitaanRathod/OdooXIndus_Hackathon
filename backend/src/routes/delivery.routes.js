@@ -4,12 +4,14 @@ const { protect } = require('../middleware/auth');
 const { authorize } = require('../middleware/rbac');
 const c = make(require('../services/delivery.service'));
 
+// FIX #6 — removed warehouse_staff from create. Only admin, inventory_manager, dispatcher can create deliveries.
 router.get('/',              protect, c.list);
-router.post('/',             protect, authorize('admin','inventory_manager','warehouse_staff'), c.create);
+router.post('/',             protect, authorize('admin', 'inventory_manager', 'dispatcher'), c.create);
 router.get('/:id',           protect, c.getOne);
-router.put('/:id',           protect, authorize('admin','inventory_manager'), c.update);
-router.post('/:id/pick',     protect, authorize('admin','inventory_manager','warehouse_staff','dispatcher'), c.action('pick'));
-router.post('/:id/pack',     protect, authorize('admin','inventory_manager','warehouse_staff','dispatcher'), c.action('pack'));
-router.post('/:id/validate', protect, authorize('admin','inventory_manager'), c.action('validate'));
+router.put('/:id',           protect, authorize('admin', 'inventory_manager'), c.update);
+router.post('/:id/pick',     protect, authorize('admin', 'inventory_manager', 'warehouse_staff', 'dispatcher'), c.action('pick'));
+router.post('/:id/pack',     protect, authorize('admin', 'inventory_manager', 'warehouse_staff', 'dispatcher'), c.action('pack'));
+router.post('/:id/validate', protect, authorize('admin', 'inventory_manager'), c.action('validate'));
 router.post('/:id/cancel',   protect, authorize('admin'), c.action('cancel'));
+
 module.exports = router;

@@ -28,8 +28,8 @@ const create = async ({ location_id, reason, lines }, userId) => {
   if (lines?.length) {
     for (const line of lines) {
       const inv = await Inventory.findOne({ where: { product_id: line.product_id, location_id } });
-      const qty_expected  = inv ? parseFloat(inv.qty_on_hand) : 0;
-      const qty_counted   = parseFloat(line.qty_counted);
+      const qty_expected   = inv ? parseFloat(inv.qty_on_hand) : 0;
+      const qty_counted    = parseFloat(line.qty_counted);
       const qty_difference = qty_counted - qty_expected;
       await AdjustmentLine.create({
         adjustment_id: adj.id, product_id: line.product_id,
@@ -38,6 +38,14 @@ const create = async ({ location_id, reason, lines }, userId) => {
     }
   }
   return adj;
+};
+
+// FIX #9 — was missing, caused "service.update is not a function" crash
+const update = async (id, data) => {
+  const adj = await Adjustment.findByPk(id);
+  if (!adj) throw new AppError('Adjustment not found', 404);
+  if (adj.status !== 'draft') throw new AppError('Cannot edit a processed adjustment', 400);
+  return adj.update({ reason: data.reason });
 };
 
 const apply = async (id, userId) => {
@@ -63,4 +71,4 @@ const apply = async (id, userId) => {
   return adj.update({ status: 'applied' });
 };
 
-module.exports = { list, getOne, create, apply };
+module.exports = { list, getOne, create, update, apply };
