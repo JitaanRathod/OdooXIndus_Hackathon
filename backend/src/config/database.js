@@ -1,23 +1,16 @@
-// Sequelize CLI config — used by sequelize-cli for migrations and seeders
+const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-module.exports = {
-  development: {
-    username: process.env.DB_USER || 'stockify_user',
-    password: process.env.DB_PASS || 'stockify123',
-    database: process.env.DB_NAME || 'stockify_db',
-    host: process.env.DB_HOST || 'localhost',   // ← fixed from 192.168.56.1
-    port: parseInt(process.env.DB_PORT) || 3306,
-    dialect: 'postgres',
-    logging: false,
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
+  protocol: 'postgres',
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
   },
-  production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT) || 3306,
-    dialect: 'postgres',
-    logging: false,
-  },
-};
+});
+
+module.exports = { sequelize };

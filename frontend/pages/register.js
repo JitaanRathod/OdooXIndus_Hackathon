@@ -3,8 +3,6 @@ import { useRouter } from 'next/router'
 import api from '../lib/api'
 
 const ROLES = [
-  { value: 'admin',             label: 'Admin' },
-  { value: 'inventory_manager', label: 'Inventory Manager' },
   { value: 'warehouse_staff',   label: 'Warehouse Staff' },
   { value: 'dispatcher',        label: 'Dispatcher' },
 ]
