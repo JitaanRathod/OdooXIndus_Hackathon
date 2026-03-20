@@ -1,32 +1,45 @@
-/**
- * StepIndicator
- * steps: string[]
- * current: number (0-indexed)
- */
+import { motion } from 'framer-motion'
+import { Check } from 'lucide-react'
+
 export default function StepIndicator({ steps, current }) {
   return (
     <div className="flex items-center gap-0">
-      {steps.map((step, idx) => {
-        const done    = idx < current
-        const active  = idx === current
+      {steps.map((step, i) => {
+        const done = i < current
+        const active = i === current
+
         return (
           <div key={step} className="flex items-center">
-            <div className="flex flex-col items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors
-                  ${done   ? 'bg-primary-700 border-primary-700 text-white'   : ''}
-                  ${active ? 'bg-white border-primary-700 text-primary-700'   : ''}
-                  ${!done && !active ? 'bg-white border-gray-300 text-gray-400' : ''}
-                `}
+            {/* Step node */}
+            <div className="flex flex-col items-center gap-1">
+              <motion.div
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all duration-300 ${done
+                    ? 'bg-primary-600 border-primary-600 text-white'
+                    : active
+                      ? 'bg-white border-primary-500 text-primary-600 shadow-sm shadow-primary-200'
+                      : 'bg-white border-gray-200 text-gray-400'
+                  }`}
+                animate={active ? { scale: [1, 1.08, 1] } : {}}
+                transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
               >
-                {done ? '✓' : idx + 1}
-              </div>
-              <span className={`text-xs mt-1 whitespace-nowrap ${active ? 'text-primary-700 font-semibold' : done ? 'text-primary-600' : 'text-gray-400'}`}>
+                {done ? <Check className="w-3.5 h-3.5" /> : i + 1}
+              </motion.div>
+              <span className={`text-[10px] font-semibold whitespace-nowrap ${done ? 'text-primary-600' : active ? 'text-primary-500' : 'text-gray-400'
+                }`}>
                 {step}
               </span>
             </div>
-            {idx < steps.length - 1 && (
-              <div className={`h-0.5 w-12 mx-1 mb-4 ${done ? 'bg-primary-700' : 'bg-gray-200'}`} />
+
+            {/* Connector line between steps */}
+            {i < steps.length - 1 && (
+              <div className="relative w-10 h-0.5 bg-gray-200 mx-1 -translate-y-2.5 overflow-hidden">
+                <motion.div
+                  className="absolute inset-y-0 left-0 bg-primary-500"
+                  initial={{ width: 0 }}
+                  animate={{ width: done ? '100%' : '0%' }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                />
+              </div>
             )}
           </div>
         )

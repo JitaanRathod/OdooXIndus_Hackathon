@@ -1,6 +1,6 @@
-# 📦 Stockify — Inventory Management System
+# 📦 Stockify — Production-Grade Inventory Management System
 
-> A modular, real-time Inventory Management System that replaces manual registers and Excel sheets with a centralized web application. Built for the **Odoo × Indus Hackathon**.
+> A **production-ready**, real-time Inventory Management System built for the **Odoo × Indus Hackathon** and upgraded to a full enterprise-grade application — featuring a modern animated UI, RBAC security, atomic DB transactions, and free-tier cloud deployment support.
 
 ---
 
@@ -15,56 +15,19 @@
 │   │   FRONTEND       │          │       BACKEND            │   │
 │   │   Next.js 14     │  Axios   │   Node.js + Express      │   │
 │   │   Tailwind CSS   │ ──────►  │   REST API /api/v1/*     │   │
-│   │   Pages Router   │ ◄──────  │   JWT + RBAC Auth        │   │
-│   └──────────────────┘  JSON   │   Zod Validation         │   │
-│                                 │   Swagger UI /api-docs   │   │
+│   │   Framer Motion  │ ◄──────  │   JWT + RBAC Auth        │   │
+│   │   Lucide Icons   │  JSON   │   Zod Validation         │   │
+│   └──────────────────┘          │   Swagger UI /api-docs   │   │
 │                                 └────────────┬─────────────┘   │
 │                                              │ Sequelize ORM    │
 │                                              ▼                  │
 │                                 ┌──────────────────────────┐   │
 │                                 │       DATABASE           │   │
-│                                 │   MySQL (Local)          │   │
+│                                 │   MySQL (Local / Cloud)  │   │
 │                                 │   15 Tables              │   │
 │                                 │   Migrations + Seeders   │   │
 │                                 └──────────────────────────┘   │
-│                                                                 │
 └─────────────────────────────────────────────────────────────────┘
-
-                     API REQUEST FLOW
-     ┌────────┐    ┌───────────┐    ┌────────────┐    ┌──────┐
-     │ Client │───►│ JWT Auth  │───►│ RBAC Check │───►│ Zod  │
-     └────────┘    │Middleware │    │ Middleware  │    │Valid.│
-                   └───────────┘    └────────────┘    └──┬───┘
-                                                         │
-                   ┌───────────┐    ┌────────────┐    ┌──▼───┐
-                   │  MySQL DB │◄───│  Sequelize │◄───│ Ctrl │
-                   │           │    │    ORM     │    │ + Svc│
-                   └───────────┘    └────────────┘    └──────┘
-
-                     DATABASE SCHEMA (Key Tables)
-     ┌──────────┐    ┌──────────┐    ┌──────────────┐
-     │  users   │    │ products │    │  inventory   │
-     │──────────│    │──────────│    │──────────────│
-     │ id (PK)  │    │ id (PK)  │    │ product_id   │
-     │ name     │    │ name     │    │ location_id  │
-     │ email    │    │ sku      │    │ qty_on_hand  │
-     │ role     │    │ category │    └──────────────┘
-     │ is_active│    │ reorder  │
-     └──────────┘    └──────────┘
-          │
-          │ created_by FK
-          ▼
-     ┌──────────┐    ┌──────────┐    ┌──────────────┐
-     │ receipts │    │deliveries│    │  transfers   │
-     └──────────┘    └──────────┘    └──────────────┘
-          │               │                │
-          └───────────────┴────────────────┘
-                          │ All log to
-                          ▼
-                   ┌─────────────┐
-                   │ stock_moves │  ← Audit trail for every
-                   │  (ledger)   │    stock change
-                   └─────────────┘
 ```
 
 ---
@@ -73,123 +36,134 @@
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **Frontend** | Next.js 14 (Pages Router) | Server-side capable React framework |
+| **Frontend** | Next.js 14 (Pages Router) | React framework with SSR support |
 | **Styling** | Tailwind CSS | Utility-first CSS |
+| **Animations** | Framer Motion | Page transitions, spring physics, micro-animations |
+| **Icons** | Lucide React | Consistent SVG icon system |
+| **Notifications** | react-hot-toast | Global toast notification system |
+| **CSV Parsing** | papaparse | Robust CSV import (handles quoted commas) |
 | **HTTP Client** | Axios | API calls with JWT interceptor |
 | **Backend** | Node.js + Express | REST API server |
-| **Database** | MySQL (Local) | Relational data storage |
-| **ORM** | Sequelize | Models, migrations, seeders |
+| **Database** | MySQL | Relational data storage |
+| **ORM** | Sequelize | Models, migrations, transactions, seeders |
 | **Auth** | JWT (jsonwebtoken) | Stateless authentication |
 | **Access Control** | Custom RBAC Middleware | Role-based route protection |
 | **Validation** | Zod | Request body validation |
-| **API Docs** | Swagger UI (swagger-jsdoc) | Live interactive API explorer |
+| **Security** | express-rate-limit | Rate limiting on auth routes |
+| **API Docs** | Swagger UI | Live interactive API explorer |
 | **Password** | bcryptjs | Secure password hashing |
 
 ---
 
 ## ✨ Features
 
-### 🔐 Authentication
-- User registration and login with JWT tokens
-- OTP-based password reset (printed to server console in dev)
-- Role-based access control — 4 distinct user roles
-- Session persistence via localStorage + `/auth/me` verification
-- Automatic logout on token expiry (401 interceptor)
+### 🎨 Modern UI/UX
+- **Animated Login Page** — dark glassmorphism design with cursor-following gradient blobs (spring physics), floating particle dots, grid texture overlay
+- **One-click role login** — 4 quick-access buttons (Admin 👑, Inventory Manager 📦, Warehouse Staff 🏭, Dispatcher 🚚)
+- **Instant page transitions** — Framer Motion with optimized non-blocking animations (~150ms)
+- **Sidebar** — animated active indicator, role-based avatar color hashing, smooth mobile drawer
+- **KPI Cards** — animated count-up numbers, hover lift effects, trend indicators
+- **DataTable** — skeleton loading rows, sortable columns, staggered row entrance animations
+- **Per-row stock highlighting** — Out-of-stock rows glow red (left border accent), low-stock rows glow amber
+- **Animated alert banners** — gradient buttons with pulsing ping dots for critical stock warnings
+
+### 🔔 Notifications & Dialogs
+- **react-hot-toast** — branded success/error/info toasts on every action
+- **ConfirmDialog** — spring-animated modal replacing all `window.confirm()` calls
+- **StatusBadge** — animated pulse dots for active workflow states
+
+### 🔐 Authentication & Security
+- JWT-based login, OTP password reset via email
+- Role-based access control (RBAC) — 4 roles with granular permissions
+- **Rate limiting** — 20 requests / 15 min on auth routes (express-rate-limit)
+- **SQL injection prevention** — allowlist + parameterized queries in `refGen.js`
+- **Race condition protection** — `SELECT ... FOR UPDATE` locks in transfer/delivery services
+- Multi-origin **CORS** configured for simultaneous localhost + Vercel deployment
+- Payload size limit (2 MB), `trust proxy` for Railway
 
 ### 📊 Dashboard
-- Real-time KPI cards: Total Products, Low Stock, Out of Stock, Pending Receipts, Pending Deliveries
-- Stock Alerts panel showing all products below reorder point
-- Recent Stock Movements feed with color-coded quantities
-- Dismissable low-stock alert banner
+- Real-time KPI cards: Total Products, Low Stock Items, Out of Stock, Pending Receipts, Pending Deliveries, Scheduled Transfers
+- **Fixed**: New products with zero inventory (never received) now correctly counted as out-of-stock via `LEFT JOIN` SQL
+- Stock Alerts panel — all products at or below reorder point, sorted by urgency
+- Recent Stock Moves feed with color-coded quantities (+/-)
 
 ### 📦 Product Management
-- Full CRUD for products (name, SKU, category, unit of measure, reorder point)
-- Low Stock and Out of Stock badges on product rows
-- Stock status filter (In Stock / Low Stock / Out of Stock)
-- **CSV bulk import** with preview, template download, and error reporting
-- **Quick Restock** button on low/out-of-stock products — creates a receipt pre-filled with product details
-- Category management
+- Full CRUD with **animated confirmation dialogs** instead of `window.confirm()`
+- **Eye-catching stock badges** — solid filled pills with animated ping ring (Out of Stock / Low Stock)
+- **Click any row** → Location Breakdown Modal showing per-warehouse/location stock with visual progress bars and % of total
+- Stock status filter with clickable alert button shortcut
+- **CSV bulk import** powered by `papaparse` (handles commas inside quoted fields, edge cases fixed)
+- Quick Restock shortcut from detail modal
+- Deletion blocked if product has inventory history (409 + guidance message)
 
-### 📥 Receipts (Incoming Stock)
-- Create receipts with supplier name and multiple product lines
-- Status workflow: Draft → Waiting → Ready → Done / Cancelled
-- Validate receipt → stock automatically increases in inventory
-- Role-restricted: only Inventory Manager and Admin can validate
+### 📥 Receipts
+- Multi-line receipt creation, supplier tracking
+- Workflow: Draft → Waiting → Ready → Done / Cancelled
+- **Detail modal** — click any row to see all product lines (expected vs received qty)
+- Stock atomically updated in DB transaction on validation
+- Inventory Manager can cancel (RBAC fixed)
 
-### 🚚 Deliveries (Outgoing Stock)
-- 3-step workflow: Pick → Pack → Validate
-- Visual step indicator showing progress
-- Validate delivery → stock automatically decreases
-- Insufficient stock check — rejects if not enough on hand
-- Role-restricted: Dispatcher handles Pick/Pack, Manager validates
+### 🚚 Deliveries
+- Full 4-step workflow: Draft → Picking → Packing → Done
+- **Detail modal** with StepIndicator progress and product lines
+- Per-row action loading states, ConfirmDialog on cancel
+- `SELECT ... FOR UPDATE` lock prevents concurrent over-selling
 
 ### 🔄 Internal Transfers
-- Move stock between any two warehouse locations
-- Source and destination location selectors
-- Confirm transfer → stock moves from source to destination
-- Full audit trail logged in stock ledger
+- Move stock between warehouse locations, per-location stock validation
+- Confirm uses DB transaction with inventory lock
+- Inventory Manager added to allowed roles (RBAC fix)
 
 ### 🔧 Stock Adjustments
-- Fix discrepancies between system records and physical counts
-- Per-product counted quantity input
-- System auto-calculates difference (positive or negative)
-- Apply adjustment → stock updated and delta logged
+- **Live system qty display** — shows existing qty for the selected location while entering counted qty
+- Amber highlight when counted qty differs from system qty
+- Atomic transaction on apply, zero-delta guard (no phantom stock moves)
 
-### 📋 Stock Move History (Ledger)
-- Complete audit trail of every stock movement
-- Filterable by type (Receipt / Delivery / Transfer / Adjustment)
-- Date range filter
-- Search by product name or SKU
-- Color-coded quantities: green (+) for incoming, red (−) for outgoing
-- Meaningful labels: "Supplier" for receipt source, "Customer" for delivery destination
-
-### 🏭 Warehouse Management
-- Multi-warehouse support
-- Locations and zones within each warehouse
-- Admin-only access
+### 📋 Move History / Audit Ledger
+- Server-side search by product name or SKU
+- Date range filter, type filter
+- Pagination support, record count badge
 
 ### 👥 User Management
-- View all users with role badges
-- Change user roles via dropdown
-- Deactivate / Reactivate users (safe — preserves transaction history)
-- Admin-only access
+- Deterministic avatar color based on name hash
+- Role dropdown (disabled on own account)
+- Deactivate / Reactivate with ConfirmDialog (preserves transaction history)
 
-### 📖 API Documentation
-- Full Swagger UI at `http://localhost:5000/api-docs`
-- All endpoints documented with request/response schemas
-- JWT bearer auth built into Swagger UI
-- Try any endpoint live from the browser
+### 🏭 Warehouse & Location Management
+- Multi-warehouse, multi-zone support
+- Admin-only access
 
 ---
 
 ## 🔑 Demo Credentials
 
-> All accounts use the same password for demo purposes.
+> All accounts share the same password.
 
-| Role | Email | Password |
-|------|-------|----------|
-| **Admin** | `admin@stockify.com` | `stockify123` |
-| **Inventory Manager** | `manager@stockify.com` | `stockify123` |
-| **Warehouse Staff** | `staff@stockify.com` | `stockify123` |
-| **Dispatcher** | `dispatcher@stockify.com` | `stockify123` |
+| Role | Email | Password | Landing Page |
+|------|-------|----------|-------------|
+| 👑 **Admin** | `admin@stockify.com` | `stockify123` | Dashboard |
+| 📦 **Inventory Manager** | `manager@stockify.com` | `stockify123` | Dashboard |
+| 🏭 **Warehouse Staff** | `staff@stockify.com` | `stockify123` | Dashboard |
+| 🚚 **Dispatcher** | `dispatcher@stockify.com` | `stockify123` | Deliveries |
+
+> Or click the **Quick Access** role buttons on the login page to sign in instantly.
 
 ---
 
-## 🚀 Setup & Installation
+## 🚀 Local Setup
 
 ### Prerequisites
 - Node.js 18+
-- MySQL running locally
+- MySQL 8+ running locally
 - Git
 
-### Step 1 — Clone the repository
+### 1 — Clone
 ```bash
 git clone https://github.com/your-username/OdooXIndus_Hackathon.git
 cd OdooXIndus_Hackathon
 ```
 
-### Step 2 — Create the database
-Open MySQL Workbench and run:
+### 2 — Create the database
 ```sql
 CREATE DATABASE stockify_db;
 CREATE USER 'stockify_user'@'localhost' IDENTIFIED BY 'stockify123';
@@ -197,32 +171,62 @@ GRANT ALL PRIVILEGES ON stockify_db.* TO 'stockify_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-### Step 3 — Backend setup
+### 3 — Backend
 ```bash
 cd backend
 npm install
 cp .env.example .env
-# Edit .env and set your DB_PASS
+# Edit .env — set DB_HOST, DB_USER, DB_PASS, DB_NAME, JWT_SECRET
 npm run db:migrate
 npm run db:seed
-npm run dev
+npm run dev          # starts on :5000
 ```
 
-### Step 4 — Frontend setup
+### 4 — Frontend
 ```bash
 cd frontend
 npm install
 cp .env.local.example .env.local
-npm run dev
+# .env.local: NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
+npm run dev          # starts on :3000
 ```
 
-### Step 5 — Open in browser
+### 5 — Open in browser
+
 | Service | URL |
 |---------|-----|
-| Frontend | http://localhost:3000 |
-| Backend API | http://localhost:5000/api/v1 |
-| Swagger Docs | http://localhost:5000/api-docs |
-| Health Check | http://localhost:5000/api/v1/health |
+| **App** | http://localhost:3000 |
+| **API** | http://localhost:5000/api/v1 |
+| **Swagger Docs** | http://localhost:5000/api-docs |
+| **Health Check** | http://localhost:5000/api/v1/health |
+
+---
+
+## ☁️ Free Cloud Deployment
+
+### Backend → Railway (free tier)
+
+1. Push `backend/` to GitHub
+2. Create a new Railway project → **Deploy from GitHub**
+3. Add a **MySQL** plugin — Railway auto-sets `DATABASE_URL`
+4. Set environment variables:
+   ```
+   NODE_ENV=production
+   JWT_SECRET=<strong-secret>
+   ALLOWED_ORIGINS=https://your-app.vercel.app
+   DATABASE_URL=<auto-filled by Railway MySQL plugin>
+   ```
+5. Railway uses `railway.json` (already included) for build/start/healthcheck config
+
+### Frontend → Vercel (free tier)
+
+1. Push `frontend/` to GitHub
+2. Create new Vercel project → import repo, set root to `frontend/`
+3. Add environment variable:
+   ```
+   NEXT_PUBLIC_API_URL=https://your-backend.up.railway.app/api/v1
+   ```
+4. `vercel.json` (already included) handles framework config and rewrites
 
 ---
 
@@ -232,49 +236,56 @@ npm run dev
 OdooXIndus_Hackathon/
 ├── backend/
 │   ├── src/
-│   │   ├── config/          # DB connection, env config
+│   │   ├── config/          # db.js (supports DATABASE_URL for Railway)
 │   │   ├── models/          # Sequelize models + associations
-│   │   ├── routes/          # Express route definitions
-│   │   ├── controllers/     # Request handlers (thin layer)
-│   │   ├── services/        # Business logic
-│   │   ├── middleware/       # auth.js, rbac.js, validate.js, errorHandler.js
+│   │   ├── routes/          # Express route definitions (RBAC fixed)
+│   │   ├── controllers/     # Thin request handlers
+│   │   ├── services/        # Business logic + DB transactions
+│   │   │   ├── receipt.service.js      # Atomic validate()
+│   │   │   ├── delivery.service.js     # LOCK.UPDATE on validate()
+│   │   │   ├── transfer.service.js     # LOCK.UPDATE on confirm()
+│   │   │   ├── adjustment.service.js   # Atomic apply()
+│   │   │   ├── product.service.js      # qty_on_hand aggregate, FK delete guard
+│   │   │   ├── dashboard.service.js    # LEFT JOIN for zero-inventory products
+│   │   │   ├── alerts.service.js       # LEFT JOIN for new products
+│   │   │   └── stockmove.service.js    # Search + pagination
+│   │   ├── middleware/      # auth.js, rbac.js, validate.js, errorHandler.js
 │   │   ├── validators/      # Zod schemas
-│   │   ├── utils/           # catchAsync, AppError, jwt, refGen
-│   │   └── docs/            # Swagger config
+│   │   └── utils/           # catchAsync, AppError, refGen (SQL injection fixed)
 │   ├── migrations/          # 15 ordered migration files
 │   ├── seeders/             # Demo data seeder
-│   ├── server.js            # Express entry point
+│   ├── server.js            # Express entry + rate-limit + CORS + trust proxy
+│   ├── railway.json         # Railway deployment config
 │   └── .env.example
 │
 ├── frontend/
-│   ├── pages/               # Next.js pages
-│   │   ├── dashboard.js
-│   │   ├── products.js
-│   │   ├── receipts.js
-│   │   ├── deliveries.js
-│   │   ├── transfers.js
-│   │   ├── adjustments.js
-│   │   ├── move-history.js
+│   ├── pages/
+│   │   ├── login.js         # Animated bg, glassmorphism, role quick-login
+│   │   ├── dashboard.js     # KPI cards, stock alerts, recent moves
+│   │   ├── products.js      # CRUD, CSV import, location breakdown modal
+│   │   ├── receipts.js      # Workflow + detail modal
+│   │   ├── deliveries.js    # 4-step workflow + detail modal
+│   │   ├── transfers.js     # Confirm/cancel with RBAC fix
+│   │   ├── adjustments.js   # Live system qty display
+│   │   ├── move-history.js  # Server-side search + date filter
 │   │   ├── warehouses.js
-│   │   ├── users.js
-│   │   ├── login.js
-│   │   └── register.js
-│   ├── components/          # Reusable UI components
-│   │   ├── Layout.jsx
-│   │   ├── Sidebar.jsx
-│   │   ├── DataTable.jsx
-│   │   ├── Modal.jsx
-│   │   ├── KPICard.jsx
-│   │   ├── StatusBadge.jsx
-│   │   ├── FilterBar.jsx
-│   │   ├── StepIndicator.jsx
-│   │   ├── ProductLineForm.jsx
-│   │   ├── AlertBanner.jsx
+│   │   └── users.js         # Avatar colors, ConfirmDialog, role selector
+│   ├── components/
+│   │   ├── Layout.jsx       # Sticky header, breadcrumb, fast page transitions
+│   │   ├── Sidebar.jsx      # Lucide icons, animated active indicator
+│   │   ├── DataTable.jsx    # Skeleton loading, sort, row highlights, pagination
+│   │   ├── Modal.jsx        # Spring animation, scroll lock
+│   │   ├── KPICard.jsx      # Count-up, hover lift, trend indicator
+│   │   ├── StatusBadge.jsx  # Animated pulse dots
+│   │   ├── FilterBar.jsx    # Animated search + smart clear
+│   │   ├── StepIndicator.jsx# Animated connector fill
+│   │   ├── ConfirmDialog.jsx# Replaces window.confirm()
+│   │   ├── Toast.jsx        # react-hot-toast provider
 │   │   └── LoadingSpinner.jsx
-│   ├── context/
-│   │   └── AuthContext.js   # JWT auth state
-│   ├── lib/
-│   │   └── api.js           # Axios instance + interceptors
+│   ├── context/AuthContext.js
+│   ├── lib/api.js           # Axios + JWT interceptor
+│   ├── styles/globals.css   # Design tokens, component classes, keyframes
+│   ├── vercel.json          # Vercel deployment config
 │   └── .env.local.example
 │
 └── README.md
@@ -282,25 +293,70 @@ OdooXIndus_Hackathon/
 
 ---
 
-## 🗄️ Database Tables
+## 🗄️ Database Tables (15)
 
 | Table | Description |
 |-------|-------------|
-| `users` | System users with roles |
+| `users` | System users with roles and active status |
 | `categories` | Product categories |
-| `warehouses` | Warehouse locations |
-| `locations` | Zones within warehouses |
-| `products` | Product catalog with SKUs |
-| `inventory` | Current stock per product per location |
-| `receipts` | Incoming goods orders |
-| `receipt_lines` | Individual product lines on receipts |
+| `warehouses` | Physical warehouse buildings |
+| `locations` | Zones/bins within each warehouse |
+| `products` | Product catalog (SKU, category, reorder point) |
+| `inventory` | Current stock per product **per location** |
+| `receipts` | Incoming goods purchase orders |
+| `receipt_lines` | Product lines on each receipt |
 | `deliveries` | Outgoing goods orders |
-| `delivery_lines` | Individual product lines on deliveries |
+| `delivery_lines` | Product lines on each delivery |
 | `transfers` | Internal stock movement orders |
-| `transfer_lines` | Product lines on transfers |
-| `adjustments` | Stock count corrections |
-| `adjustment_lines` | Product lines on adjustments |
-| `stock_moves` | **Audit ledger** — every stock change ever made |
+| `transfer_lines` | Product lines on each transfer |
+| `adjustments` | Physical stock count corrections |
+| `adjustment_lines` | Product lines on each adjustment |
+| `stock_moves` | **Immutable audit ledger** — every stock change ever made |
+
+---
+
+## 🔐 Role Permissions Matrix
+
+| Feature | Admin | Inv. Manager | WH Staff | Dispatcher |
+|---------|:-----:|:------------:|:--------:|:----------:|
+| Dashboard | ✅ | ✅ | ✅ | ✅ |
+| Products CRUD | ✅ | ✅ | 👁️ | ❌ |
+| CSV Import | ✅ | ✅ | ❌ | ❌ |
+| Create Receipt | ✅ | ✅ | ✅ | ❌ |
+| Validate Receipt | ✅ | ✅ | ❌ | ❌ |
+| Cancel Receipt | ✅ | ✅ | ❌ | ❌ |
+| Create Delivery | ✅ | ✅ | ❌ | ✅ |
+| Pick / Pack Delivery | ✅ | ✅ | ✅ | ✅ |
+| Validate Delivery | ✅ | ✅ | ❌ | ❌ |
+| Create Transfer | ✅ | ✅ | ✅ | ❌ |
+| Confirm Transfer | ✅ | ✅ | ❌ | ❌ |
+| Stock Adjustments | ✅ | ✅ | ✅ | ❌ |
+| Users Management | ✅ | ❌ | ❌ | ❌ |
+| Warehouses/Locations | ✅ | ❌ | ❌ | ❌ |
+
+---
+
+## 📄 API Endpoints
+
+| Resource | Endpoints |
+|----------|-----------|
+| **Auth** | `POST /auth/register` · `POST /auth/login` · `GET /auth/me` · `POST /auth/forgot-password` · `POST /auth/reset-password` |
+| **Products** | `GET/POST /products` · `GET/PUT/DELETE /products/:id` |
+| **Categories** | `GET/POST /categories` · `GET/PUT/DELETE /categories/:id` |
+| **Warehouses** | `GET/POST /warehouses` · `GET/PUT/DELETE /warehouses/:id` |
+| **Locations** | `GET/POST /locations` · `GET/PUT/DELETE /locations/:id` |
+| **Receipts** | `GET/POST /receipts` · `GET /receipts/:id` · `POST /receipts/:id/validate` · `POST /receipts/:id/cancel` |
+| **Deliveries** | `GET/POST /deliveries` · `GET /deliveries/:id` · `POST /deliveries/:id/pick` · `/pack` · `/validate` · `/cancel` |
+| **Transfers** | `GET/POST /transfers` · `POST /transfers/:id/confirm` · `/cancel` |
+| **Adjustments** | `GET/POST /adjustments` · `POST /adjustments/:id/apply` |
+| **Inventory** | `GET /inventory?product_id=&location_id=` |
+| **Stock Moves** | `GET /stock-moves?search=&limit=&offset=&date_from=&date_to=` |
+| **Dashboard** | `GET /dashboard` |
+| **Alerts** | `GET /alerts` |
+| **Users** | `GET /users` · `PUT /users/:id` |
+| **Health** | `GET /health` |
+
+> **Full interactive docs:** `http://localhost:5000/api-docs`
 
 ---
 
@@ -315,28 +371,4 @@ OdooXIndus_Hackathon/
 
 ---
 
-## 📄 API Endpoints Summary
-
-| Resource | Endpoints |
-|----------|-----------|
-| Auth | `POST /auth/register` · `POST /auth/login` · `GET /auth/me` · `POST /auth/forgot-password` · `POST /auth/reset-password` |
-| Products | `GET/POST /products` · `GET/PUT/DELETE /products/:id` |
-| Categories | `GET/POST /categories` · `GET/PUT/DELETE /categories/:id` |
-| Warehouses | `GET/POST /warehouses` · `GET/PUT/DELETE /warehouses/:id` |
-| Locations | `GET/POST /locations` · `GET/PUT/DELETE /locations/:id` |
-| Receipts | `GET/POST /receipts` · `POST /receipts/:id/validate` · `POST /receipts/:id/cancel` |
-| Deliveries | `GET/POST /deliveries` · `POST /deliveries/:id/pick` · `POST /deliveries/:id/pack` · `POST /deliveries/:id/validate` |
-| Transfers | `GET/POST /transfers` · `POST /transfers/:id/confirm` · `POST /transfers/:id/cancel` |
-| Adjustments | `GET/POST /adjustments` · `POST /adjustments/:id/apply` |
-| Inventory | `GET /inventory` |
-| Stock Moves | `GET /stock-moves` |
-| Dashboard | `GET /dashboard` |
-| Alerts | `GET /alerts` |
-| Users | `GET /users` · `PUT /users/:id` |
-| Health | `GET /health` |
-
-> **Full interactive docs:** `http://localhost:5000/api-docs`
-
----
-
-*Built with ❤️ for Odoo × Indus Hackathon*
+*Built with ❤️ for Odoo × Indus Hackathon · Upgraded to production-grade*

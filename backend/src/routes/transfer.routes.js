@@ -6,11 +6,11 @@ const validate = require('../middleware/validate');
 const { transferSchema } = require('../validators/modules.validator');
 const c = make(require('../services/transfer.service'));
 
-router.get('/',             protect, c.list);
-router.post('/',            protect, authorize('admin','warehouse_staff'), validate(transferSchema), c.create);
-router.get('/:id',          protect, c.getOne);
-router.put('/:id',          protect, authorize('admin'), c.update);
-router.post('/:id/confirm', protect, authorize('admin','warehouse_staff'), c.action('confirm'));
-router.post('/:id/cancel',  protect, authorize('admin'), c.action('cancel'));
+router.get('/', protect, c.list);
+router.post('/', protect, authorize('admin', 'inventory_manager', 'warehouse_staff'), validate(transferSchema), c.create);
+router.get('/:id', protect, c.getOne);
+router.put('/:id', protect, authorize('admin', 'inventory_manager'), c.update);
+router.post('/:id/confirm', protect, authorize('admin', 'inventory_manager', 'warehouse_staff'), c.action('confirm'));
+router.post('/:id/cancel', protect, authorize('admin'), c.action('cancel'));
 
 module.exports = router;

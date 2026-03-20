@@ -4,29 +4,163 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── CSS Custom Properties ───────────────────────────────────────────────────── */
+:root {
+  --shadow-xs:  0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md:  0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --shadow-lg:  0 10px 15px -3px rgba(0,0,0,0.07), 0 4px 6px -2px rgba(0,0,0,0.04);
+  --shadow-xl:  0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.04);
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────────── */
 @layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
   body {
-    font-family: 'DM Sans', sans-serif;
+    @apply bg-gray-50 text-gray-900 font-sans;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar        { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track  { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb  { @apply bg-gray-300 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400; }
+}
+
+/* ── Components ──────────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Card */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-100;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s ease;
+  }
+  .card:hover { box-shadow: var(--shadow-md); }
+
+  /* Buttons */
+  .btn-base {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm
+           transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn-base bg-primary-600 text-white hover:bg-primary-700 active:scale-95
+           focus:ring-primary-400 shadow-sm hover:shadow-md;
+    background-image: linear-gradient(135deg, theme('colors.primary.600'), theme('colors.primary.700'));
+  }
+  .btn-primary:hover {
+    background-image: linear-gradient(135deg, theme('colors.primary.700'), theme('colors.primary.800'));
+  }
+
+  .btn-secondary {
+    @apply btn-base bg-white text-gray-700 border border-gray-200 hover:bg-gray-50
+           active:scale-95 focus:ring-gray-300 hover:border-gray-300;
+    box-shadow: var(--shadow-xs);
+  }
+
+  .btn-danger {
+    @apply btn-base bg-red-600 text-white hover:bg-red-700 active:scale-95
+           focus:ring-red-400 shadow-sm;
+  }
+
+  .btn-ghost {
+    @apply btn-base bg-transparent text-gray-600 hover:bg-gray-100 active:scale-95 focus:ring-gray-300;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900
+           placeholder-gray-400 bg-white
+           focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary-400
+           transition-all duration-150;
+  }
+  .input:hover:not(:focus) { @apply border-gray-300; }
+
+  /* Label */
+  .label {
+    @apply block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5;
+  }
+
+  /* Badge variants */
+  .badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .badge-gray    { @apply badge bg-gray-100   text-gray-700; }
+  .badge-blue    { @apply badge bg-blue-100   text-blue-700; }
+  .badge-green   { @apply badge bg-green-100  text-green-700; }
+  .badge-yellow  { @apply badge bg-amber-100  text-amber-700; }
+  .badge-red     { @apply badge bg-red-100    text-red-700; }
+  .badge-purple  { @apply badge bg-purple-100 text-purple-700; }
+  .badge-indigo  { @apply badge bg-indigo-100 text-indigo-700; }
+
+  /* Pulse dot animation for active states */
+  .badge-pulse::before {
+    content: '';
+    @apply inline-block w-1.5 h-1.5 rounded-full mr-1.5;
+    animation: pulse-dot 2s infinite;
+  }
+  .badge-pulse-blue::before   { @apply bg-blue-500; }
+  .badge-pulse-yellow::before { @apply bg-amber-500; }
+  .badge-pulse-purple::before { @apply bg-purple-500; }
+
+  /* Section header line */
+  .section-header {
+    @apply flex items-center justify-between mb-5;
+  }
+  .section-title {
+    @apply text-base font-bold text-gray-900;
+  }
+
+  /* Table skeleton */
+  .skeleton {
+    @apply bg-gray-200 rounded animate-pulse;
+  }
+
+  /* Page fade-in */
+  .page-enter {
+    animation: page-fade 0.25s ease forwards;
   }
 }
 
-@layer components {
-  .btn-primary {
-    @apply px-4 py-2 bg-primary-700 hover:bg-primary-800 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2;
+/* ── Keyframe Animations ─────────────────────────────────────────────────────── */
+@layer utilities {
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.8); }
   }
-  .btn-secondary {
-    @apply px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-200 transition-colors flex items-center gap-2;
+
+  @keyframes page-fade {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  .btn-danger {
-    @apply px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2;
+
+  @keyframes count-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  .input {
-    @apply w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-300 bg-white;
+
+  @keyframes slide-in-right {
+    from { opacity: 0; transform: translateX(12px); }
+    to   { opacity: 1; transform: translateX(0); }
   }
-  .label {
-    @apply block text-xs font-medium text-gray-600 mb-1;
+
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-sm;
-  }
+
+  .animate-slide-up          { animation: slide-up         0.3s ease forwards; }
+  .animate-slide-in-right    { animation: slide-in-right   0.25s ease forwards; }
+  .animate-count-up          { animation: count-up         0.4s ease forwards; }
 }
