@@ -21,15 +21,16 @@ router.get('/', async (req, res) => {
     dbStatus = 'disconnected';
   }
 
-  return res.status(200).json({
-    success: true,
+  const isHealthy = dbStatus === 'connected';
+
+  return res.status(isHealthy ? 200 : 503).json({
+    success: isHealthy,
     data: {
-      status: 'ok',
+      status: isHealthy ? 'ok' : 'degraded',
       db: dbStatus,
       environment: NODE_ENV,
       timestamp: new Date().toISOString(),
     },
   });
 });
-
 module.exports = router;

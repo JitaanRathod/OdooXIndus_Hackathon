@@ -33,7 +33,7 @@ const getOne = async (id) => {
 };
 
 const create = async ({ customer_name, notes, lines }, userId) => {
-  const reference_no = await nextRef('DEL', 'deliveries');
+  const reference_no = await nextRef('DEL', 'deliveries',null);
   const delivery = await Delivery.create({ reference_no, customer_name, notes, created_by: userId });
   if (lines?.length) {
     await DeliveryLine.bulkCreate(lines.map(l => ({

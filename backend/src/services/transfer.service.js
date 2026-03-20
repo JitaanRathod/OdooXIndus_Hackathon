@@ -32,7 +32,7 @@ const getOne = async (id) => {
 };
 
 const create = async (data, userId) => {
-  const reference_no = await nextRef('TRF', 'transfers');
+  const reference_no = await nextRef('TRF', 'transfers',null);
   const transfer = await Transfer.create({ ...data, reference_no, created_by: userId });
   if (data.lines?.length) {
     await TransferLine.bulkCreate(

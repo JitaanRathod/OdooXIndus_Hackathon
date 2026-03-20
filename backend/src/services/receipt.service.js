@@ -33,7 +33,7 @@ const getOne = async (id) => {
 };
 
 const create = async ({ supplier_name, notes, lines }, userId) => {
-  const reference_no = await nextRef('REC', 'receipts');
+  const reference_no = await nextRef('REC', 'receipts',null);
   const receipt = await Receipt.create({ reference_no, supplier_name, notes, created_by: userId });
   if (lines?.length) {
     await ReceiptLine.bulkCreate(lines.map(l => ({

@@ -29,7 +29,7 @@ const getOne = async (id) => {
 };
 
 const create = async ({ location_id, reason, lines }, userId) => {
-  const reference_no = await nextRef('ADJ', 'adjustments');
+  const reference_no = await nextRef('ADJ', 'adjustments',null);
   const adj = await Adjustment.create({ reference_no, location_id, reason, created_by: userId });
   if (lines?.length) {
     for (const line of lines) {
